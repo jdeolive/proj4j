@@ -29,17 +29,27 @@ public class Proj4FileReader
   	}
     BufferedReader reader = new BufferedReader( 
           new InputStreamReader(inStr) );
-    String[] args;
     try {
-      args = readFile(reader, name);
+      return readParameters(name, reader);
     }
     finally {
       if (reader != null)
         reader.close();
     }
-    return args;
   }
-  
+
+  public String[] readParameters(String name, BufferedReader reader ) 
+  throws IOException {
+      String[] args;
+      try {
+        args = readFile(reader, name);
+      }
+      finally {
+        if (reader != null)
+          reader.close();
+      }
+      return args;
+  }
   private StreamTokenizer createTokenizer(BufferedReader reader)
   {
     StreamTokenizer t = new StreamTokenizer( reader );
