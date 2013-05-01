@@ -155,6 +155,16 @@ public abstract class Projection implements Cloneable {
 	protected String name = null;
 
 	/**
+         * The description of this projection
+         */
+        protected String description = null;
+
+	/**
+         * The ogc wkt name of this projection
+         */
+	protected String wktName = null;
+	
+	/**
 	 * Conversion factor from metres to whatever units the projection uses.
 	 */
 	protected double fromMetres = 1;
@@ -401,6 +411,37 @@ public abstract class Projection implements Cloneable {
 			return name;
 		return toString();
 	}
+
+	/**
+	 * The description / long name of the projection.
+	 */
+	public String getDescription() {
+            return description;
+        }
+
+	/**
+         * Sets the description / long name of the projection.
+         */
+	public void setDescription(String description) {
+            this.description = description;
+        }
+
+	/**
+	 * The OGC Well Known Text name of the projection.
+	 * <p>
+	 * Not all projections have a OGC WKT name so this value may be <code>null</code>.
+	 * </p>
+	 */
+	public String getWktName() {
+            return wktName;
+        }
+
+	/**
+	 * Sets the OGC Well Known Text name of the projection.
+	 */
+	public void setWktName(String wktName) {
+            this.wktName = wktName;
+        }
 
 	/**
 	 * Get a string which describes this projection in PROJ.4 format.

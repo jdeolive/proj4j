@@ -104,21 +104,29 @@ public class Registry {
     return null;
   }
 
-  private Map<String, Class> projRegistry;
+  private Map<String, ProjEntry> projRegistry;
 
-  private void register( String name, Class cls, String description ) {
-    projRegistry.put( name, cls );
+  private void register( String name, Class cls, String description) {
+    register(name, cls, description, null);
   }
 
+  private void register( String name, Class cls, String description, String ogcWktName) {
+      projRegistry.put( name, new ProjEntry(cls, name, description, ogcWktName));
+  }
+  
   public Projection getProjection( String name ) {
 //    if ( projRegistry == null )
 //      initialize();
-    Class cls = (Class)projRegistry.get( name );
-    if ( cls != null ) {
+    ProjEntry pe = (ProjEntry)projRegistry.get( name );
+    if ( pe != null ) {
       try {
-        Projection projection = (Projection)cls.newInstance();
-        if ( projection != null )
+        Projection projection = (Projection)pe.projClass.newInstance();
+        if ( projection != null ) {
           projection.setName( name );
+          projection.setDescription(pe.description);
+          projection.setWktName(pe.ogcWktName);
+        }
+        
         return projection;
       }
       catch ( IllegalAccessException e ) {
@@ -136,8 +144,8 @@ public class Registry {
     if (projRegistry != null) 
       return;
     projRegistry = new HashMap();
-    register( "aea", AlbersProjection.class, "Albers Equal Area" );
-    register( "aeqd", EquidistantAzimuthalProjection.class, "Azimuthal Equidistant" );
+    register( "aea", AlbersProjection.class, "Albers Equal Area", "Albers_Conic_Equal_Area");
+    register( "aeqd", EquidistantAzimuthalProjection.class, "Azimuthal Equidistant", "Azimuthal_Equidistant" );
     register( "airy", AiryProjection.class, "Airy" );
     register( "aitoff", AitoffProjection.class, "Aitoff" );
     register( "alsk", Projection.class, "Mod. Stereographics of Alaska" );
@@ -147,9 +155,9 @@ public class Registry {
     register( "bipc", BipolarProjection.class, "Bipolar conic of western hemisphere" );
     register( "boggs", BoggsProjection.class, "Boggs Eumorphic" );
     register( "bonne", BonneProjection.class, "Bonne (Werner lat_1=90)" );
-    register( "cass", CassiniProjection.class, "Cassini" );
+    register( "cass", CassiniProjection.class, "Cassini", "Cassini_Soldner" );
     register( "cc", CentralCylindricalProjection.class, "Central Cylindrical" );
-    register( "cea", Projection.class, "Equal Area Cylindrical" );
+    register( "cea", Projection.class, "Equal Area Cylindrical", "Cylindrical_Equal_Area");
 //    register( "chamb", Projection.class, "Chamberlin Trimetric" );
     register( "collg", CollignonProjection.class, "Collignon" );
     register( "crast", CrasterProjection.class, "Craster Parabolic (Putnins P4)" );
@@ -157,19 +165,19 @@ public class Registry {
     register( "eck1", Eckert1Projection.class, "Eckert I" );
     register( "eck2", Eckert2Projection.class, "Eckert II" );
 //    register( "eck3", Eckert3Projection.class, "Eckert III" );
-    register( "eck4", Eckert4Projection.class, "Eckert IV" );
-    register( "eck5", Eckert5Projection.class, "Eckert V" );
-    register( "eck6", Eckert6Projection.class, "Eckert VI" );
-    register( "eqc", PlateCarreeProjection.class, "Equidistant Cylindrical (Plate Caree)" );
-    register( "eqdc", EquidistantConicProjection.class, "Equidistant Conic" );
+    register( "eck4", Eckert4Projection.class, "Eckert IV", "Eckert_IV" );
+    register( "eck5", Eckert5Projection.class, "Eckert V");
+    register( "eck6", Eckert6Projection.class, "Eckert VI", "Eckert_VI" );
+    register( "eqc", PlateCarreeProjection.class, "Equidistant Cylindrical (Plate Caree)", "Equirectangular");
+    register( "eqdc", EquidistantConicProjection.class, "Equidistant Conic", "Equidistant_Conic" );
     register( "euler", EulerProjection.class, "Euler" );
     register( "fahey", FaheyProjection.class, "Fahey" );
     register( "fouc", FoucautProjection.class, "Foucaut" );
     register( "fouc_s", FoucautSinusoidalProjection.class, "Foucaut Sinusoidal" );
-    register( "gall", GallProjection.class, "Gall (Gall Stereographic)" );
+    register( "gall", GallProjection.class, "Gall (Gall Stereographic)", "Gall_Stereographic" );
 //    register( "gins8", Projection.class, "Ginsburg VIII (TsNIIGAiK)" );
 //    register( "gn_sinu", Projection.class, "General Sinusoidal Series" );
-    register( "gnom", GnomonicAzimuthalProjection.class, "Gnomonic" );
+    register( "gnom", GnomonicAzimuthalProjection.class, "Gnomonic", "Gnomonic" );
     register( "goode", GoodeProjection.class, "Goode Homolosine" );
 //    register( "gs48", Projection.class, "Mod. Stererographics of 48 U.S." );
 //    register( "gs50", Projection.class, "Mod. Stererographics of 50 U.S." );
@@ -179,13 +187,13 @@ public class Registry {
     register( "kav5", KavraiskyVProjection.class, "Kavraisky V" );
 //    register( "kav7", Projection.class, "Kavraisky VII" );
 //    register( "labrd", Projection.class, "Laborde" );
-    register( "laea", LambertAzimuthalEqualAreaProjection.class, "Lambert Azimuthal Equal Area" );
+    register( "laea", LambertAzimuthalEqualAreaProjection.class, "Lambert Azimuthal Equal Area", "Lambert_Azimuthal_Equal_Area");
     register( "lagrng", LagrangeProjection.class, "Lagrange" );
     register( "larr", LarriveeProjection.class, "Larrivee" );
     register( "lask", LaskowskiProjection.class, "Laskowski" );
     register( "latlong", LongLatProjection.class, "Lat/Long" );
     register( "longlat", LongLatProjection.class, "Lat/Long" );
-    register( "lcc", LambertConformalConicProjection.class, "Lambert Conformal Conic" );
+    register( "lcc", LambertConformalConicProjection.class, "Lambert Conformal Conic");
     register( "leac", LambertEqualAreaConicProjection.class, "Lambert Equal Area Conic" );
 //    register( "lee_os", Projection.class, "Lee Oblated Stereographic" );
     register( "loxim", LoximuthalProjection.class, "Loximuthal" );
@@ -197,9 +205,9 @@ public class Registry {
 //    register( "mbtfps", Projection.class, "McBryde-Thomas Flat-Polar Sinusoidal" );
     register( "merc", MercatorProjection.class, "Mercator" );
 //    register( "mil_os", Projection.class, "Miller Oblated Stereographic" );
-    register( "mill", MillerProjection.class, "Miller Cylindrical" );
+    register( "mill", MillerProjection.class, "Miller Cylindrical", "Miller_Cylindrical" );
 //    register( "mpoly", Projection.class, "Modified Polyconic" );
-    register( "moll", MolleweideProjection.class, "Mollweide" );
+    register( "moll", MolleweideProjection.class, "Mollweide", "Mollweide");
     register( "murd1", Murdoch1Projection.class, "Murdoch I" );
     register( "murd2", Murdoch2Projection.class, "Murdoch II" );
     register( "murd3", Murdoch3Projection.class, "Murdoch III" );
@@ -207,15 +215,15 @@ public class Registry {
 //    register( "nell_h", Projection.class, "Nell-Hammer" );
     register( "nicol", NicolosiProjection.class, "Nicolosi Globular" );
     register( "nsper", PerspectiveProjection.class, "Near-sided perspective" );
-//    register( "nzmg", Projection.class, "New Zealand Map Grid" );
+//    register( "nzmg", Projection.class, "New Zealand Map Grid", "New_Zealand_Map_Grid");
 //    register( "ob_tran", Projection.class, "General Oblique Transformation" );
 //    register( "ocea", Projection.class, "Oblique Cylindrical Equal Area" );
 //    register( "oea", Projection.class, "Oblated Equal Area" );
-    register( "omerc", ObliqueMercatorProjection.class, "Oblique Mercator" );
+    register( "omerc", ObliqueMercatorProjection.class, "Oblique Mercator", "Oblique_Mercator");
 //    register( "ortel", Projection.class, "Ortelius Oval" );
-    register( "ortho", OrthographicAzimuthalProjection.class, "Orthographic" );
+    register( "ortho", OrthographicAzimuthalProjection.class, "Orthographic", "Orthographic" );
     register( "pconic", PerspectiveConicProjection.class, "Perspective Conic" );
-    register( "poly", PolyconicProjection.class, "Polyconic (American)" );
+    register( "poly", PolyconicProjection.class, "Polyconic (American)", "Polyconic" );
 //    register( "putp1", Projection.class, "Putnins P1" );
     register( "putp2", PutninsP2Projection.class, "Putnins P2" );
 //    register( "putp3", Projection.class, "Putnins P3" );
@@ -226,23 +234,23 @@ public class Registry {
 //    register( "putp6", Projection.class, "Putnins P6" );
 //    register( "putp6p", Projection.class, "Putnins P6'" );
     register( "qua_aut", QuarticAuthalicProjection.class, "Quartic Authalic" );
-    register( "robin", RobinsonProjection.class, "Robinson" );
+    register( "robin", RobinsonProjection.class, "Robinson", "Robinson" );
     register( "rpoly", RectangularPolyconicProjection.class, "Rectangular Polyconic" );
-    register( "sinu", SinusoidalProjection.class, "Sinusoidal (Sanson-Flamsteed)" );
-    register( "somerc", SwissObliqueMercatorProjection.class, "Swiss Oblique Mercator" );
-    register( "stere", StereographicAzimuthalProjection.class, "Stereographic" );
-    register( "sterea", ObliqueStereographicAlternativeProjection.class, "Oblique Stereographic Alternative" );
+    register( "sinu", SinusoidalProjection.class, "Sinusoidal (Sanson-Flamsteed)", "Sinusoidal");
+    register( "somerc", SwissObliqueMercatorProjection.class, "Swiss Oblique Mercator", "Swiss_Oblique_Cylindrical" );
+    register( "stere", StereographicAzimuthalProjection.class, "Stereographic", "Stereographic");
+    register( "sterea", ObliqueStereographicAlternativeProjection.class, "Oblique Stereographic Alternative", "Oblique_Stereographic");
     register( "tcc", TranverseCentralCylindricalProjection.class, "Transverse Central Cylindrical" );
     register( "tcea", TransverseCylindricalEqualArea.class, "Transverse Cylindrical Equal Area" );
 //    register( "tissot", TissotProjection.class, "Tissot Conic" );
-    register( "tmerc", TransverseMercatorProjection.class, "Transverse Mercator" );
+    register( "tmerc", TransverseMercatorProjection.class, "Transverse Mercator", "Transverse_Mercator");
 //    register( "tpeqd", Projection.class, "Two Point Equidistant" );
 //    register( "tpers", Projection.class, "Tilted perspective" );
 //    register( "ups", Projection.class, "Universal Polar Stereographic" );
 //    register( "urm5", Projection.class, "Urmaev V" );
     register( "urmfps", UrmaevFlatPolarSinusoidalProjection.class, "Urmaev Flat-Polar Sinusoidal" );
     register( "utm", TransverseMercatorProjection.class, "Universal Transverse Mercator (UTM)" );
-    register( "vandg", VanDerGrintenProjection.class, "van der Grinten (I)" );
+    register( "vandg", VanDerGrintenProjection.class, "van der Grinten (I)", "VanDerGrinten" );
 //    register( "vandg2", Projection.class, "van der Grinten II" );
 //    register( "vandg3", Projection.class, "van der Grinten III" );
 //    register( "vandg4", Projection.class, "van der Grinten IV" );
@@ -260,5 +268,17 @@ public class Registry {
     register( "wintri", WinkelTripelProjection.class, "Winkel Tripel" );
   }
 
+  static class ProjEntry {
+      Class projClass;
+      String name;
+      String description;
+      String ogcWktName;
 
+      ProjEntry(Class projClass, String name, String description, String ogcWktName) {
+          this.projClass = projClass;
+          this.name = name;
+          this.description = description;
+          this.ogcWktName = ogcWktName;
+      }
+  }
 }
