@@ -249,7 +249,7 @@ public class Registry {
 //    register( "ups", Projection.class, "Universal Polar Stereographic" );
 //    register( "urm5", Projection.class, "Urmaev V" );
     register( "urmfps", UrmaevFlatPolarSinusoidalProjection.class, "Urmaev Flat-Polar Sinusoidal" );
-    register( "utm", TransverseMercatorProjection.class, "Universal Transverse Mercator (UTM)" );
+    register( "utm", TransverseMercatorProjection.class, "Universal Transverse Mercator (UTM)", "Transverse_Mercator" );
     register( "vandg", VanDerGrintenProjection.class, "van der Grinten (I)", "VanDerGrinten" );
 //    register( "vandg2", Projection.class, "van der Grinten II" );
 //    register( "vandg3", Projection.class, "van der Grinten III" );
