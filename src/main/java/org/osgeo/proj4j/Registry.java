@@ -118,6 +118,15 @@ public class Registry {
 //    if ( projRegistry == null )
 //      initialize();
     ProjEntry pe = (ProjEntry)projRegistry.get( name );
+    if (pe == null) {
+        for (ProjEntry e : projRegistry.values()) {
+            if (name.equals(e.description) || name.equals(e.ogcWktName)) {
+                pe = e;
+                break;
+            }
+        }
+    }
+    
     if ( pe != null ) {
       try {
         Projection projection = (Projection)pe.projClass.newInstance();
